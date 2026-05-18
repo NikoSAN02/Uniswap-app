@@ -1,7 +1,13 @@
 'use client'
 
-import { SwapWidget, lightTheme } from '@uniswap/widgets'
+import { lightTheme } from '@uniswap/widgets'
 import dynamic from 'next/dynamic'
+
+const SwapWidget = dynamic(
+  () => import('@uniswap/widgets').then((mod) => mod.SwapWidget),
+  { ssr: false }
+)
+
 import { useMemo, useEffect, useState } from 'react'
 import { useConnectorClient } from 'wagmi'
 import { providers } from 'ethers'
@@ -10,7 +16,9 @@ import { ConnectButton } from './ConnectButton'
 // Suppress known harmless third-party React warnings from popping up
 if (typeof window !== 'undefined') {
   // Polyfill for brotli/emscripten "Browser is not defined" error
-  ;(window as any).Browser = (window as any).Browser || {}
+  ;(window as any).Browser = {
+    T: () => {}
+  }
 
   const originalError = console.error
   const originalWarn = console.warn
